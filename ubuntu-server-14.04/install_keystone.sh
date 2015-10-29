@@ -19,6 +19,7 @@ su -s /bin/sh -c "keystone-manage db_sync" keystone
 
 echo "ServerName controller" >> /etc/apache2/apache2.conf
 
+cp config/wsgi-keystone.conf /etc/apache2/sites-available/
 ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled
 service apache2 restart
 rm -f /var/lib/keystone/keystone.db
