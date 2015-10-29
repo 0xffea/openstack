@@ -24,6 +24,9 @@ apt-get --yes install glance python-glanceclient
 # Else a module import error will show up in glance-api.log
 apt-get --yes install python-swiftclient
 
+cp config/glance-api.conf /etc/glance/
+cp config/glance-registry.conf /etc/glance/
+
 su -s /bin/sh -c "glance-manage db_sync" glance
 
 service glance-registry restart
