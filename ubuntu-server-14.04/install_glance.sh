@@ -10,7 +10,7 @@ GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' \
 	  IDENTIFIED BY 'openstack';
 EOL
 
-source admin-openrc.sh
+sh admin-openrc.sh
 
 openstack user create --domain default --password openstack glance
 openstack role add --project service --user glance admin
@@ -30,3 +30,10 @@ service glance-registry restart
 service glance-api restart
 
 rm -f /var/lib/glance/glance.sqlite
+
+wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+glance image-create --name "cirros" \
+	--file cirros-0.3.4-x86_64-disk.img \
+	--disk-format qcow2 --container-format bare \
+	--visibility public --progress
+
