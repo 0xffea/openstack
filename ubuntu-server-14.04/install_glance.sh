@@ -20,6 +20,10 @@ openstack endpoint create --region RegionOne image public http://controller:9292
 openstack endpoint create --region RegionOne image internal http://controller:9292
 openstack endpoint create --region RegionOne image admin http://controller:9292
 
+apt-get --yes install glance python-glanceclient
+# Else a module import error will show up in glance-api.log
+apt-get --yes install python-swiftclient
+
 su -s /bin/sh -c "glance-manage db_sync" glance
 
 service glance-registry restart

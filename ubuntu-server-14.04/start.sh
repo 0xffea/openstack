@@ -10,7 +10,7 @@ apt-get --yes install python-openstackclient
 # HOSTNAMES
 #
 
-echo -e "127.0.0.1\tcontroller" >> /etc/hosts
+echo "127.0.0.1 controller" >> /etc/hosts
 
 sh install_sql.sh
 sh install_keystone.sh
