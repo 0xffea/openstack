@@ -7,6 +7,18 @@ apt-get --yes dist-upgrade
 apt-get --yes install python-openstackclient
 
 #
+# MQ
+#
+apt-get --yes install rabbitmq-server
+rabbitmqctl add_user openstack openstack
+rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+
+#
+# DOCKER
+#
+apt-get --yes install docker.io python-pip
+
+#
 # HOSTNAMES
 #
 

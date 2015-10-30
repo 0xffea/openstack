@@ -2,7 +2,7 @@
 # COMPUTE
 #
 mysql -uroot -popenstack <<EOL
-CREATE DATABASE nove;
+CREATE DATABASE nova;
 
 GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' \
 	                  IDENTIFIED BY 'openstack';
@@ -10,7 +10,7 @@ GRANT ALL PRIVILEGES ON nova* TO 'nova'@'%' \
 	                  IDENTIFIED BY 'openstack';
 EOL
 
-sh admin-openrc.sh
+. ./admin-openrc.sh
 
 openstack user create --domain default --password openstack nova
 openstack role add --project service --user nova admin
@@ -23,3 +23,5 @@ openstack endpoint create --region RegionOne compute admin http://controller:877
 
 apt-get --yes install nova-api nova-cert nova-conductor nova-consoleauth nova-novncproxy nova-scheduler \
 	python-novaclient
+
+su -s /bin/sh -c "nova-manage db sync" nova
