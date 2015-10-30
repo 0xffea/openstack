@@ -24,4 +24,18 @@ openstack endpoint create --region RegionOne compute admin http://controller:877
 apt-get --yes install nova-api nova-cert nova-conductor nova-consoleauth nova-novncproxy nova-scheduler \
 	python-novaclient
 
+cp config/nova.conf /etc/nova/
+
 su -s /bin/sh -c "nova-manage db sync" nova
+
+usermod -aG docker nova
+cp config/docker.filters /etc/nova/rootwrap.d/
+
+service nova-api restart
+service nova-cert restart
+service nova-consoleauth restart
+service nova-scheduler restart
+service nova-conductor restart
+service nova-novncproxy restart
+
+rm -f /var/lib/nova/nova.sqlite
