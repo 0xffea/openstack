@@ -27,6 +27,20 @@ openstack endpoint create --region RegionOne \
 openstack endpoint create --region RegionOne \
 	  network admin http://controller:9696
 
-apt-get install neutron-server neutron-plugin-ml2 \
+apt-get --yes install neutron-server neutron-plugin-ml2 \
 	neutron-plugin-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent \
 	neutron-metadata-agent python-neutronclient
+
+su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
+	  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
+
+service nova-api restart
+
+service neutron-server restart
+service neutron-plugin-linuxbridge-agent restart
+service neutron-dhcp-agent restart
+service neutron-metadata-agent restart
+
+service neutron-l3-agent restart
+
+rm -f /var/lib/neutron/neutron.sqlite
