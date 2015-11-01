@@ -43,5 +43,10 @@ openstack role create heat_stack_user
 apt-get --yes install heat-api heat-api-cfn heat-engine \
 	  python-heatclient
 
+su -s /bin/sh -c "heat-manage db_sync" heat
 
+service heat-api restart
+service heat-api-cfn restart
+service heat-engine restart
 
+rm -f /var/lib/heat/heat.sqlite
