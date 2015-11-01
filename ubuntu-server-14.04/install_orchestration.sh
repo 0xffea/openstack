@@ -11,7 +11,7 @@ GRANT ALL PRIVILEGES ON heat.* TO 'heat'@'%' \
 	  IDENTIFIED BY 'openstack';
 EOL
 
-. /admin-openrc.sh
+. ./admin-openrc.sh
 
 openstack user create --domain default --password openstack heat
 openstack role add --project service --user heat admin
