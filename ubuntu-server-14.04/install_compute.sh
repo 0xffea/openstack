@@ -30,9 +30,6 @@ cp config/nova.conf /etc/nova/
 
 su -s /bin/sh -c "nova-manage db sync" nova
 
-usermod -aG docker nova
-cp config/docker.filters /etc/nova/rootwrap.d/
-
 service nova-api restart
 service nova-cert restart
 service nova-consoleauth restart
