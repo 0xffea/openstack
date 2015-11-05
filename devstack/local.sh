@@ -30,3 +30,9 @@ if is_service_enabled neutron; then
 
 fi
 
+if is_service_enabled heat; then
+
+	source $TOP_DIR/openrc demo demo
+
+	heat stack-create -u https://raw.githubusercontent.com/0xffea/openstack/master/stacks/hot/hello_world.yaml --tags devstack cirros
+fi
