@@ -1,0 +1,42 @@
+heat_template_version: 2016-04-08
+
+description: >
+  This is a mesos cluster with spark running on it.
+
+parameters:
+  key_name:
+    type: string
+    default: heat_key
+
+  image:
+    type: string
+    default: ubuntu-wily-cloudimg
+
+  flavor:
+    type: string
+    default: m1.heat
+
+# heat scheduler question:
+# how does depends_on work
+# start all resources and pause the clients till master ready?
+# or its a http wait condition?
+
+resources:
+  mesos_master:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      user_data_format: RAW
+      user_data: |
+        #!/bin/bash
+        apt-get --yes install scala
+
+  mesos_agent:
+    type: OS::Nova::Server
+    depends_on: mesos_master
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image }
+      flavor: { get_param: flavor }

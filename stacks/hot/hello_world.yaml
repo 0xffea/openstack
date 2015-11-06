@@ -21,8 +21,8 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: key_name }
-      image: cirros-0.3.4-x86_64-uec
-      flavor: m1.nano
+      image: ubuntu-wily-cloudimg
+      flavor: m1.heat
       user_data:
         str_replace:
           template: |

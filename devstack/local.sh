@@ -19,6 +19,9 @@ if is_service_enabled nova; then
 	nova keypair-add heat_key > heat_key.pem
 	chmod 600 heat_key.pem
 
+	wget https://cloud-images.ubuntu.com/wily/current/wily-server-cloudimg-amd64-disk1.img
+	openstack image create --public --disk-format qcow2 --tag devstack --file wily-server-cloudimg-amd64-disk1.img ubuntu-wily-cloudimg
+
 fi
 
 if is_service_enabled neutron; then
@@ -36,5 +39,5 @@ if is_service_enabled heat; then
 
 	source $TOP_DIR/openrc demo demo
 
-	heat stack-create -u https://raw.githubusercontent.com/0xffea/openstack/master/stacks/hot/hello_world.yaml --tags devstack cirros
+	heat stack-create --template-file ../../stacks/hot/spark.yaml --tags devstack spark
 fi
