@@ -4,8 +4,8 @@ sudo apt-get --yes install pwgen git wget
 ADMIN_PASSWORD=$(pwgen -B 4 1)
 sed -i "s/ADMIN_PASSWORD=.*/ADMIN_PASSWORD=$ADMIN_PASSWORD/" local.conf
 
-git config --global user.email "0xffea@gmail.com"
-git config --global user.name "David Höppner"
+git config user.email "0xffea@gmail.com"
+git config user.name "David Höppner"
 
 git clone https://git.openstack.org/openstack-dev/devstack
 

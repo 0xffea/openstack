@@ -19,6 +19,7 @@ if is_service_enabled nova; then
 	nova keypair-add heat_key > heat_key.pem
 	chmod 600 heat_key.pem
 
+	source $TOP_DIR/openrc admin admin
 	wget https://cloud-images.ubuntu.com/wily/current/wily-server-cloudimg-amd64-disk1.img
 	openstack image create --public --disk-format qcow2 --tag devstack --file wily-server-cloudimg-amd64-disk1.img ubuntu-wily-cloudimg
 
