@@ -19,4 +19,4 @@ ln -s ../local.sh local.sh
 
 ./stack.sh
 # BUG: has a problem when run by stack.sh
-sh ../local.sh
+bash local.sh
