@@ -9,8 +9,6 @@ git config user.name "David Höppner"
 
 git clone https://git.openstack.org/openstack-dev/devstack
 
-chmod a+x local.sh
-
 cd devstack
 git checkout 1a2f86b3be1e
 
