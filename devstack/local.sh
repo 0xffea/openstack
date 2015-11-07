@@ -20,7 +20,9 @@ if is_service_enabled nova; then
 	chmod 600 heat_key.pem
 
 	source $TOP_DIR/openrc admin admin
-	wget https://cloud-images.ubuntu.com/wily/current/wily-server-cloudimg-amd64-disk1.img
+	if test ! -e wily-server-cloudimg-amd64-disk1.img; then
+		wget https://cloud-images.ubuntu.com/wily/current/wily-server-cloudimg-amd64-disk1.img
+	fi
 	openstack image create --public --disk-format qcow2 --tag devstack --file wily-server-cloudimg-amd64-disk1.img ubuntu-wily-cloudimg
 
 fi
