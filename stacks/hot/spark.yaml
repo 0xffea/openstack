@@ -26,10 +26,7 @@ parameters:
     description: ID of private sub network into which servers get deployed
     default: private-subnet
 
-# heat scheduler question:
-# how does depends_on work
-# start all resources and pause the clients till master ready?
-# or its a http wait condition?
+# what does depends_on? http wait condition?
 
 resources:
   mesos_master:
