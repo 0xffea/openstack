@@ -12,6 +12,13 @@ source $TOP_DIR/stackrc
 # Destination path for installation ``DEST``
 DEST=${DEST:-/opt/stack}
 
+#
+# prepare host network
+#
+sudo sysctl net.ipv4.ip_forward=1
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+
 if is_service_enabled nova; then
 
 	source $TOP_DIR/openrc demo demo
