@@ -16,6 +16,15 @@ parameters:
     type: string
     default: m1.heat
 
+  private_net_id:
+    type: string
+    description: ID of private network into which servers get deployed
+    default: private
+  private_subnet_id:
+    type: string
+    description: ID of private sub network into which servers get deployed
+    default: private-subnet
+
 # heat scheduler question:
 # how does depends_on work
 # start all resources and pause the clients till master ready?
@@ -43,7 +52,7 @@ resources:
         mkdir -p /var/lib/mesos
         chown ubuntu:ubuntu /var/lib/mesos
         MY_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
-        /usr/bin/mesos-master --ip=$MY_IP --work_dir=/var/lib/mesos &
+        screen -d -m /usr/bin/mesos-master --ip=$MY_IP --work_dir=/var/lib/mesos
 
   mesos_agent:
     type: OS::Nova::Server
@@ -53,16 +62,21 @@ resources:
       image: { get_param: image }
       flavor: { get_param: flavor }
       user_data_format: RAW
-      user_data: |
-        #!/bin/sh
-        apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF
-        DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
-        CODENAME=$(lsb_release -cs)
-        echo "deb http://repos.mesosphere.com/${DISTRO} ${CODENAME} main" > /etc/apt/sources.list.d/mesosphere.list
-        apt-get --yes update
-        apt-get --yes install mesos
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/sh
+            apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF
+            DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+            CODENAME=$(lsb_release -cs)
+            echo "deb http://repos.mesosphere.com/${DISTRO} ${CODENAME} main" > /etc/apt/sources.list.d/mesosphere.list
+            apt-get --yes update
+            apt-get --yes install mesos
+            echo "$param_mesos_master_ip  mesosmaster" >> /etc/hosts
+          params:
+            $param_mesos_master_ip: { get_attr: [mesos_master, networks, private, 1] }
 
-  security_group:
+  mesos_master_security_group:
     type: OS::Neutron::SecurityGroup
     properties:
       description: Security group for this cluster
@@ -87,3 +101,16 @@ resources:
     properties:
       floating_ip: {get_resource: floating_ip}
       server_id: {get_resource: mesos_master}
+
+  mesos_master_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: private_net_id }
+      fixed_ips:
+        - subnet_id: { get_param: private_subnet_id }
+      security_groups: [{ get_resource: mesos_master_security_group }]
+
+outputs:
+  mesos_master_private_ip:
+    description: IP address of mesos_master in private network
+    value: { get_attr: [mesos_master, networks, private, 1] }
