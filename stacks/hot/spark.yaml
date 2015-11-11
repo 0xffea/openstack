@@ -10,7 +10,7 @@ parameters:
 
   image:
     type: string
-    default: ubuntu-wily-cloudimg
+    default: ubuntu-trusty-cloudimg
 
   flavor:
     type: string
@@ -30,8 +30,20 @@ resources:
       flavor: { get_param: flavor }
       user_data_format: RAW
       user_data: |
-        #!/bin/bash
-        apt-get --yes install scala
+        #!/bin/sh
+        apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF
+        DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+        CODENAME=$(lsb_release -cs)
+        echo "deb http://repos.mesosphere.com/${DISTRO} ${CODENAME} main" > /etc/apt/sources.list.d/mesosphere.list
+        add-apt-repository -y ppa:webupd8team/java
+        su -c 'echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections'
+        apt-get --yes update
+        apt-get --yes install oracle-java8-installer
+        apt-get --yes install mesos marathon chronos
+        mkdir -p /var/lib/mesos
+        chown ubuntu:ubuntu /var/lib/mesos
+        MY_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
+        /usr/bin/mesos-master --ip=$MY_IP --work_dir=/var/lib/mesos &
 
   mesos_agent:
     type: OS::Nova::Server
@@ -40,3 +52,38 @@ resources:
       key_name: { get_param: key_name }
       image: { get_param: image }
       flavor: { get_param: flavor }
+      user_data_format: RAW
+      user_data: |
+        #!/bin/sh
+        apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF
+        DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+        CODENAME=$(lsb_release -cs)
+        echo "deb http://repos.mesosphere.com/${DISTRO} ${CODENAME} main" > /etc/apt/sources.list.d/mesosphere.list
+        apt-get --yes update
+        apt-get --yes install mesos
+
+  security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Security group for this cluster
+      name: security-group
+      rules:
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 5050
+          port_range_max: 5050
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: icmp
+
+  floating_ip:
+    type: OS::Nova::FloatingIP
+
+  floating_ip_association:
+    type: OS::Nova::FloatingIPAssociation
+    properties:
+      floating_ip: {get_resource: floating_ip}
+      server_id: {get_resource: mesos_master}
