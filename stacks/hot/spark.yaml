@@ -51,19 +51,7 @@ resources:
       user_data_format: RAW
       user_data:
         str_replace:
-          template: |
-            #!/bin/sh
-            apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF
-            DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
-            CODENAME=$(lsb_release -cs)
-            echo "deb http://repos.mesosphere.com/${DISTRO} ${CODENAME} main" > /etc/apt/sources.list.d/mesosphere.list
-            apt-get --yes update
-            apt-get --yes install mesos
-            echo "$param_mesos_master_ip  mesosmaster" >> /etc/hosts
-            mkdir -p /var/lib/mesos
-            chown ubuntu:ubuntu /var/lib/mesos
-            MY_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
-            screen -d -m /usr/bin/mesos-slave --ip=$MY_IP --master=mesosmaster:5050 --work_dir=/var/lib/mesos
+          template: { get_file: mesos_agent_install.sh }
           params:
             $param_mesos_master_ip: { get_attr: [mesos_master, networks, private, 1] }
 
