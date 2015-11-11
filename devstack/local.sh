@@ -32,6 +32,10 @@ if is_service_enabled nova; then
 	fi
 	openstack image create --public --disk-format qcow2 --tag devstack --file wily-server-cloudimg-amd64-disk1.img ubuntu-wily-cloudimg
 
+	if test ! -e trusty-server-cloudimg-amd64-disk1.img; then
+		wget https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
+	fi
+	openstack image create --public --disk-format qcow2 --tag devstack --file trusty-server-cloudimg-amd64-disk1.img ubuntu-trusty-cloudimg
 fi
 
 if is_service_enabled neutron; then
