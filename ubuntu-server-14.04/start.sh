@@ -26,3 +26,6 @@ echo "127.0.0.1 controller" >> /etc/hosts
 
 sh install_sql.sh
 sh install_keystone.sh
+sh install_glance.sh
+sh install_compute.sh
+sh install_dashboard.sh
