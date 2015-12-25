@@ -10,7 +10,7 @@ GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' \
 	  IDENTIFIED BY 'openstack';
 EOL
 
-. ./ admin-openrc.sh
+. ./admin-openrc.sh
 
 openstack user create --domain default --password openstack glance
 openstack role add --project service --user glance admin
