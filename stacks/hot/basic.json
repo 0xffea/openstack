@@ -1,0 +1,36 @@
+{
+    "id": "/urz/heibox",
+    "groups": [
+      {
+        "id": "/urz/heibox/service",
+        "dependencies": ["/urz/heibox/database"],
+        "apps": [
+          {
+            "id": "/urz/heibox/service/seafile",
+            "cmd": "while [ true ] ; do echo 'Hello Marathon' ; sleep 5 ; done",
+            "container": {
+                "type": "DOCKER",
+                "docker": {
+                     "image": "alpine"
+                }
+            },
+            "cpus": 0.25,
+            "mem": 100.0,
+            "constraints": [
+                ["hostname", "UNIQUE"]
+            ]
+          }
+        ]
+      },{
+        "id": "/urz/heibox/database",
+        "apps": [
+          {
+            "id": "/urz/heibox/database/mysql",
+            "cmd": "while [ true ] ; do echo 'Hello Marathon' ; sleep 5 ; done",
+            "cpus": 0.25,
+            "mem": 100.0
+          }
+        ]
+      }
+    ]
+}

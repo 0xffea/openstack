@@ -13,6 +13,9 @@ apt-get update
 apt-get --yes install linux-image-extra-$(uname -r)
 apt-get --yes install apparmor
 apt-get --yes install docker-engine
+
+usermod -aG docker ubuntu
+
 service docker start
 
 exit 1
