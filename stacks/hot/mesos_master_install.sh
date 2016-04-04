@@ -14,5 +14,19 @@ chown ubuntu:ubuntu /var/lib/mesos
 service mesos-master start
 service marathon start
 
+#
+# Install dcos
+#
+apt-get --yes install python-pip python-virtualenv python-dev
+cd /tmp
+git clone https://github.com/mesosphere/dcos-cli.git
+cd dcos-cli
+make env
+make packages
+cd cli
+make env
+source bin/env-setup-dev
+dcos config set core.mesos_master_url http://localhost:5050
+
 #MY_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 #screen -dmS mesos-master bash -c  "/usr/sbin/mesos-master --ip=$MY_IP --work_dir=/var/lib/mesos"
