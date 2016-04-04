@@ -10,6 +10,9 @@ apt-get --yes install oracle-java8-installer
 apt-get --yes install mesos marathon chronos
 mkdir -p /var/lib/mesos
 chown ubuntu:ubuntu /var/lib/mesos
-MY_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
-screen -dmS mesos-master bash -c  "/usr/sbin/mesos-master --ip=$MY_IP --work_dir=/var/lib/mesos"
 
+service mesos-master start
+service marathon start
+
+#MY_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
+#screen -dmS mesos-master bash -c  "/usr/sbin/mesos-master --ip=$MY_IP --work_dir=/var/lib/mesos"
